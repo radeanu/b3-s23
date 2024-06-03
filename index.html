@@ -1,36 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		<title>B3/S23</title>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>B3/S23</title>
+		<link href="./assets/reset.css" rel="stylesheet" />
+		<link href="./assets/styles.css" rel="stylesheet" />
 	</head>
 
-	<style lang="style/css">
-		table {
-		    border-collapse: collapse;
-		    border-spacing: 0;
-		}
-
-		td, tr {
-		  margin: 0;
-		  padding: 0;
-		  border: 0;
-		}
-
-		td {
-			padding: 10px;
-			border: 1px solid gray;
-		}
-	</style>
-
 	<body>
-		<nav>
-			<button id="pick-trigger">Pick</button>
-		</nav>
+		<div>
+			<div id="spawn-controls" class="spawn-controls">
+				<p>Выберите первую поколению</p>
+				<button id="spawn-submit">Готово</button>
+			</div>
 
-		<table id="campnou"></table>
+			<table id="campnou"></table>
+		</div>
 
-		<script src="./index.js"></script>
+		<template id="modal">
+			<div class="modal">
+				<div class="modal-content" id="modal-content"></div>
+			</div>
+		</template>
+
+		<template id="settings">
+			<form id="settings-form" class="settings">
+				<b>Укажите размер поля</b>
+
+				<div class="inputs">
+					<input
+						type="number"
+						name="rows"
+						placeholder="Длина"
+						required
+						min="1"
+						max="500"
+						value="50"
+					/>
+					<input
+						type="number"
+						name="cols"
+						placeholder="Ширина"
+						required
+						min="1"
+						max="500"
+						value="50"
+					/>
+				</div>
+
+				<button type="submit" class="submit">Сохранить</button>
+			</form>
+		</template>
+
+		<script src="./js/shared.js"></script>
+		<script src="./js/game.js"></script>
+		<script src="./js/modal.js"></script>
+		<script src="./js/settings.js"></script>
+		<script src="./js/map.js"></script>
+		<script src="./js/spawn.js"></script>
+		<script src="./js/index.js"></script>
 	</body>
 </html>

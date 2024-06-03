@@ -1,0 +1,131 @@
+:root {
+	--primary-color: #771460;
+	--text-dark-color: #2c3e50;
+	--text-light-color: #fcfcfc;
+
+	--bg-color: #ffffff;
+	--border-color: #d4d1d1;
+
+	--base-gap: 8px;
+	--base-padding: 10px;
+	--border-radius: 5px;
+
+	--modal-overlay-bg-color: #40404050;
+	--modal-padding: 15px;
+
+	--input-placeholder-color: #d4d1d1;
+	--input-border-radius: calc(var(--border-radius) - 2px);
+}
+
+html,
+body {
+	color: var(--text-dark-color);
+	background-color: var(--bg-color);
+	font-family: system-ui;
+}
+
+table {
+	margin: 20px;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+td,
+tr {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+td {
+	padding: var(--base-padding);
+	border: 1px solid var(--border-color);
+	user-select: none;
+	cursor: pointer;
+}
+
+td:hover,
+td[selected] {
+	background-color: var(--primary-color);
+	color: var(--text-light-color);
+}
+
+input {
+	width: 100%;
+	padding-inline: 5px;
+	border-bottom: 1px solid var(--border-color);
+}
+
+input::placeholder {
+	color: var(--input-placeholder-color);
+}
+
+button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--base-padding);
+	border-radius: var(--border-radius);
+	background-color: var(--primary-color);
+	color: var(--text-light-color);
+	cursor: pointer;
+}
+
+.modal {
+	width: 100vw;
+	height: 100vh;
+	width: 100dvw;
+	height: 100dvh;
+	position: absolute;
+	background-color: var(--modal-overlay-bg-color);
+	top: 0;
+	left: 0;
+	z-index: 999;
+	overflow: hidden;
+	overflow-anchor: none;
+	-ms-overflow-style: none;
+	touch-action: auto;
+	-ms-touch-action: auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.modal-content {
+	margin-block: 50px;
+	min-height: 100px;
+	width: fit-content;
+	max-width: 90%;
+	padding: var(--modal-padding);
+	background-color: var(--bg-color);
+	border-radius: var(--border-radius);
+}
+
+.settings .inputs {
+	margin-top: 20px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--base-gap);
+}
+
+.settings input {
+	height: 30px;
+	width: 100px;
+}
+
+.settings button.submit {
+	margin-top: 20px;
+	margin-left: auto;
+	right: 0;
+}
+
+.spawn-controls {
+	padding: 10px 20px;
+	border-bottom: 1px solid var(--border-color);
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--base-gap);
+	align-items: center;
+	justify-content: space-between;
+	display: none;
+}
