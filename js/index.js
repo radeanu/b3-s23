@@ -1,16 +1,36 @@
-async function main() {
+async function newGame() {
 	const { getSettings } = useSettings();
 	const settings = await getSettings();
+	console.log(settings);
+}
 
-	const map = useMap(settings.rows, settings.cols);
-	map.draw();
+function useStartBtn() {
+	const nodeEl = getNodeBySelector();
+}
 
-	const kents = await map.pickKents();
-
-	const game = useGame(settings.rows, settings.cols);
-
-	game.setKents(kents);
-	game.run();
+async function main() {
+	await newGame();
+	// const { getSettings } = useSettings();
+	// const settings = await getSettings();
+	// const map = useMap(settings.rows, settings.cols);
+	// map.draw();
+	// const game = useGame();
+	// game.setSize(settings.rows, settings.cols);
+	// let kents = await map.pickKents();
+	// function renderNewGeneration(kentsList) {
+	// 	const newKents = game.getNewGeneration(kentsList);
+	// 	newKents.forEach((nr) => map.drawKent(nr, true));
+	// 	kentsList.forEach((nr) => {
+	// 		if (newKents.includes(nr)) return;
+	// 		return map.drawKent(nr, false);
+	// 	});
+	// 	return newKents;
+	// }
+	// document.addEventListener('keydown', (ev) => {
+	// 	ev.preventDefault();
+	// 	if (ev.code !== 'ArrowRight') return;
+	// 	kents = renderNewGeneration(kents);
+	// });
 }
 
 document.addEventListener('DOMContentLoaded', main);

@@ -1,15 +1,14 @@
 function areSameKents(fKents, sKents) {
 	if (fKents.length !== sKents.length) return false;
 
-	return fKents.every((k1) => sKents.some((k2) => k1.x === k2.x && k1.y === k2.y));
+	return fKents.every((nr) => sKents.includes(nr));
 }
 
-function useGame(rows, cols) {
-	let kents = [];
+function useGame() {
+	let rows = 0;
+	let cols = 0;
 
-	const map = useMap();
-
-	function _getFamily(x, y) {
+	function getKentFamilyXY(x, y) {
 		const colsCount = cols - 1;
 		const rowsCount = rows - 1;
 
@@ -28,79 +27,72 @@ function useGame(rows, cols) {
 		return [topLeft, top, topRight, right, bottomRight, bottom, bottomLeft, left];
 	}
 
-	function _newGeneration(kentsList, prevList = []) {
-		console.log('NEW');
+	function getKentFamily(nr) {
+		const TOTAL = rows * cols;
+
+		const isFirsRow = nr - cols < 0;
+		const isLastRow = nr + cols > TOTAL;
+
+		const isFirstCol = nr === 1 ? true : (nr - 1) % cols === 0;
+		const isLastCol = nr === TOTAL ? true : nr % cols === 0;
+
+		const top = isFirsRow ? TOTAL - Math.abs(nr - cols) : nr - cols;
+		const bottom = isLastRow ? nr + cols - TOTAL : nr + cols;
+
+		const left = isFirstCol ? nr + (cols - 1) : nr - 1;
+		const right = isLastCol ? nr - (cols - 1) : nr + 1;
+
+		const topRight = isLastCol ? top - (cols - 1) : top + 1;
+		const topLeft = isFirstCol ? top + (cols - 1) : top - 1;
+
+		const bottomRight = isLastCol ? bottom - (cols - 1) : bottom + 1;
+		const bottomLeft = isFirstCol ? bottom + (cols - 1) : bottom - 1;
+
+		return [topLeft, top, topRight, right, bottomRight, bottom, bottomLeft, left];
+	}
+
+	function getNewGeneration(kentsList = [], prevList = []) {
 		const isSameGeneration = areSameKents(prevList, kentsList);
 
 		if (isSameGeneration) {
-			console.log('Game over: ' + isSameGeneration);
-			return;
+			return kentsList;
 		}
 
-		const result = [];
+		const result = {};
 		const newGeneration = [];
 
-		kentsList.forEach((k) => {
-			const kFam = _getFamily(k.x, k.y);
+		kentsList.forEach((nr) => {
+			const kFam = getKentFamily(nr);
 
-			kFam.forEach((fam) => {
-				const findIndex = result.findIndex((r) => r.x === fam.x && r.y === fam.y);
-
-				if (findIndex === -1) {
-					return result.push({ ...fam, count: 1 });
-				}
-
-				return (result[findIndex].count += 1);
+			kFam.forEach((famNr) => {
+				const targetCount = result[famNr] ?? 0;
+				result[famNr] = targetCount + 1;
 			});
 		});
 
-		result.forEach((r) => {
-			const kentExists = kentsList.some((i) => r.x === i.x && r.y === i.y);
+		Object.entries(result).forEach(([nr, count]) => {
+			const kentNr = +nr;
+			const kentExist = kentsList.includes(kentNr);
 
-			if (r.count === 3) {
-				if (!kentExists) {
-					map.drawKent(r.x, r.y, true);
-				}
+			const newLife = count === 3 && !kentExist;
+			const stillAlive = (count === 2 || count === 3) && kentExist;
 
-				return newGeneration.push({ x: r.x, y: r.y });
-			}
-
-			if ((r.count === 2 || r.count === 3) && kentExists) {
-				return newGeneration.push({ x: r.x, y: r.y });
-			}
-
-			if (kentExists) {
-				return map.drawKent(r.x, r.y, false);
+			if (stillAlive || newLife) {
+				return newGeneration.push(kentNr);
 			}
 		});
 
-		if (!newGeneration.length) {
-			console.log('Game over');
-
-			kentsList.forEach((r) => {
-				map.drawKent(r.x, r.y, false);
-			});
-			return;
-		}
-
-		setTimeout(() => {
-			_newGeneration(newGeneration, kentsList);
-		}, 30);
-		// window.requestAnimationFrame(() => {
-		// 	_newGeneration(newGeneration, kentsList);
-		// });
+		return newGeneration;
 	}
 
-	function setKents(list) {
-		kents = list;
-	}
-
-	function run() {
-		_newGeneration(kents);
+	function setSize(r, c) {
+		rows = r;
+		cols = c;
 	}
 
 	return {
-		setKents,
-		run,
+		setSize,
+		getKentFamily,
+		getNewGeneration,
 	};
 }

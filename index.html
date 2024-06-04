@@ -9,53 +9,54 @@
 	</head>
 
 	<body>
-		<div>
-			<div id="spawn-controls" class="spawn-controls">
-				<p>Выберите первую поколению</p>
-				<button id="spawn-submit">Готово</button>
+		<div class="header">
+			<div style="display: none" data-start>
+				<button data-new-game>Новая игра</button>
 			</div>
 
-			<table id="campnou"></table>
+			<div style="display: none" class="spawn-controls" data-spawn>
+				<p>Выберите первую поколению</p>
+				<button data-spawn-submit>Готово</button>
+			</div>
 		</div>
 
-		<template id="modal">
-			<div class="modal">
-				<div class="modal-content" id="modal-content"></div>
+		<div class="main">
+			<table data-campnou></table>
+		</div>
+
+		<div class="modal" data-settings-modal>
+			<div class="modal-content">
+				<form class="settings" data-settings-form>
+					<b>Укажите размер поля</b>
+
+					<div class="inputs">
+						<input
+							type="number"
+							name="rows"
+							placeholder="Длина"
+							required
+							min="1"
+							max="500"
+							value="10"
+						/>
+						<input
+							type="number"
+							name="cols"
+							placeholder="Ширина"
+							required
+							min="1"
+							max="500"
+							value="10"
+						/>
+					</div>
+
+					<button type="submit" class="submit">Сохранить</button>
+				</form>
 			</div>
-		</template>
-
-		<template id="settings">
-			<form id="settings-form" class="settings">
-				<b>Укажите размер поля</b>
-
-				<div class="inputs">
-					<input
-						type="number"
-						name="rows"
-						placeholder="Длина"
-						required
-						min="1"
-						max="500"
-						value="50"
-					/>
-					<input
-						type="number"
-						name="cols"
-						placeholder="Ширина"
-						required
-						min="1"
-						max="500"
-						value="50"
-					/>
-				</div>
-
-				<button type="submit" class="submit">Сохранить</button>
-			</form>
-		</template>
+		</div>
 
 		<script src="./js/shared.js"></script>
 		<script src="./js/game.js"></script>
-		<script src="./js/modal.js"></script>
 		<script src="./js/settings.js"></script>
 		<script src="./js/map.js"></script>
 		<script src="./js/spawn.js"></script>

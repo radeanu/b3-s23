@@ -2,11 +2,11 @@ const MAP_SELECTOR = '#campnou';
 
 function useKent(x, y, number) {
 	const node = document.createElement('td');
-	// node.innerHTML = number;
+	node.innerHTML = number;
 	node.dataset.x = x;
 	node.dataset.y = y;
 	node.dataset.nr = number;
-	node.title = `${x}- ${y}`;
+	node.title = number;
 
 	return node;
 }
@@ -15,7 +15,7 @@ function useMap(rows, cols) {
 	const nodeEl = getNodeBySelector(MAP_SELECTOR);
 
 	function draw() {
-		for (let y = 0, number = 0; y < cols; y++) {
+		for (let y = 0, number = 1; y < cols; y++) {
 			const row = document.createElement('tr');
 
 			for (let x = 0; x < rows; x++) {
@@ -28,8 +28,8 @@ function useMap(rows, cols) {
 		}
 	}
 
-	function drawKent(x, y, selected = true) {
-		const targetNode = nodeEl.querySelector(`td[data-x="${x}"][data-y="${y}"]`);
+	function drawKent(nr, selected = true) {
+		const targetNode = nodeEl.querySelector(`td[data-nr="${nr}"]`);
 
 		if (targetNode === null) return;
 
@@ -42,29 +42,29 @@ function useMap(rows, cols) {
 		const spawnControllers = useSpawn();
 		spawnControllers.display();
 
-		nodeEl.addEventListener('click', (ev) => {
+		const pick = (ev) => {
+			ev.preventDefault();
+
 			const dataset = ev.target.dataset;
 			const nr = parseInt(dataset.nr);
 
-			const exists = kents.some((k) => k.nr === nr);
-
-			if (exists) {
-				kents = kents.filter((v) => v.nr !== nr);
-				drawKent(dataset.x, dataset.y, false);
+			if (kents.includes(nr)) {
+				kents = kents.filter((knr) => knr !== nr);
+				drawKent(nr, false);
 				return;
 			}
 
-			drawKent(dataset.x, dataset.y, true);
+			drawKent(nr, true);
 
-			kents.push({
-				nr,
-				x: parseInt(dataset.x),
-				y: parseInt(dataset.y),
-			});
-		});
+			kents.push(nr);
+		};
+
+		nodeEl.addEventListener('click', pick);
 
 		await spawnControllers.submit();
 		spawnControllers.hide();
+
+		nodeEl.removeEventListener('click', pick);
 
 		return kents;
 	}
