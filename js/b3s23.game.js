@@ -5,6 +5,13 @@ class B3S23Game {
 
 	constructor() {}
 
+	_getDecimal(nr) {
+		if (this.#cols === 0) return false;
+
+		const divide = nr / this.#cols;
+		return divide - Math.floor(divide);
+	}
+
 	setSize(r, c) {
 		this.#rows = r;
 		this.#cols = c;
@@ -34,11 +41,11 @@ class B3S23Game {
 
 	getKentFamily(nr) {
 		const colsOffset = this.#cols - 1;
-		const isFirsRow = nr - this.#cols < 0;
+		const isFirsRow = nr - this.#cols <= 0;
 		const isLastRow = nr + this.#cols > this.#totalCount;
 
-		const isFirstCol = nr === 1 ? true : (nr - 1) % this.#cols === 0;
-		const isLastCol = nr === this.#totalCount ? true : nr % this.#cols === 0;
+		const isLastCol = this._getDecimal(nr) === 0;
+		const isFirstCol = nr === 1 ? true : this._getDecimal(nr - 1) === 0;
 
 		const top = isFirsRow ? this.#totalCount - Math.abs(nr - this.#cols) : nr - this.#cols;
 		const bottom = isLastRow ? nr + this.#cols - this.#totalCount : nr + this.#cols;
