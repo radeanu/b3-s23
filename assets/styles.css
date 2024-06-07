@@ -23,7 +23,6 @@
 
 html,
 body {
-	overflow: hidden;
 	color: var(--text-dark-color);
 	background-color: var(--bg-color);
 	font-family: system-ui;
@@ -31,6 +30,11 @@ body {
 	height: 100vh;
 	width: 100dvw;
 	height: 100dvh;
+}
+
+canvas {
+	/* border: 1px solid var(--primary-color); */
+	margin: 10px 10px;
 }
 
 h3 {

@@ -1,83 +1,78 @@
-const TIMEOUT = 100;
+const SIZE = 20;
+const CANVAS_SIZE = 500;
+
+/**
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {number} size
+ */
+function drawGridV2(ctx, size) {
+	const canvas = document.createElement('canvas');
+	const pCtx = canvas.getContext('2d');
+
+	canvas.width = size;
+	canvas.height = size;
+
+	pCtx.beginPath();
+	pCtx.moveTo(size, 0);
+	pCtx.lineTo(size, size);
+	pCtx.moveTo(size, size);
+	pCtx.lineTo(0, size);
+	pCtx.stroke();
+
+	const pattern = ctx.createPattern(canvas, 'repeat');
+
+	const matrix = new DOMMatrix();
+	pattern.setTransform(matrix.translate(0.5, 0.5));
+
+	ctx.fillStyle = pattern;
+	ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+}
+
+/**
+ *
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {number} size
+ */
+function drawGrid(ctx, size, color = '#000') {
+	const { width, height } = ctx.canvas;
+
+	ctx.save();
+	ctx.clearRect(0, 0, width, height);
+
+	ctx.beginPath();
+	ctx.strokeStyle = color;
+
+	for (let x = 0; x <= width; x += size) {
+		ctx.moveTo(x, 0);
+		ctx.lineTo(x, height);
+	}
+
+	for (let y = 0; y <= height; y += size) {
+		ctx.moveTo(0, y);
+		ctx.lineTo(width, y);
+	}
+
+	ctx.stroke();
+	ctx.restore();
+}
 
 async function main() {
-	let kents = [];
-	let isPlaying = false;
+	/** @type {HTMLCanvasElement} */
+	const canvas = document.querySelector('[data-campnou]');
 
-	const game = new B3S23Game();
-	const mapView = new MapView();
-	const settingsView = new SettingsView();
-	const controllersView = new ControllersView();
+	const ctx = canvas.getContext('2d');
 
-	const settings = await settingsView.getSettings();
+	ctx.translate(0.5, 0.5);
+	drawGrid(ctx, SIZE);
 
-	mapView.setSize(settings.rows, settings.cols).draw();
-	game.setSize(settings.rows, settings.cols);
-
-	controllersView.enableSpawnMode();
-	mapView.enable();
-
-	controllersView.spawnNavView.onRandom(() => {
-		mapView.disable();
-		mapView.resetSelected();
-
-		const randKents = game.getRandomGeneration();
-		randKents.forEach((nr) => mapView.drawKent(nr, true));
-
-		mapView.enable();
-	});
-
-	controllersView.spawnNavView.onSubmit(() => {
-		kents = mapView.getSelectedKents();
-
-		if (!kents.length) return;
-
-		mapView.disable();
-		controllersView.enableGameMode();
-	});
-
-	controllersView.gameNavView.onPause(() => {
-		isPlaying = false;
-	});
-
-	controllersView.gameNavView.onNext(() => {
-		playNewGeneration();
-	});
-
-	controllersView.gameNavView.onRestart(() => {
-		location.reload();
-	});
-
-	controllersView.gameNavView.onPlay(() => {
-		isPlaying = true;
-		playNewGeneration();
-	});
-
-	function playNewGeneration() {
-		const newKents = game.getNewGeneration(kents);
-
-		if (game.areSameKents(kents, newKents)) {
-			isPlaying = false;
-			controllersView.gameNavView.reset();
-			controllersView.gameNavView.displayMessage('Игра закончено');
-			return;
+	document.addEventListener('keydown', (ev) => {
+		if (ev.code === 'ArrowDown') {
 		}
 
-		newKents.forEach((nr) => mapView.drawKent(nr, true));
-
-		kents.forEach((nr) => {
-			if (newKents.includes(nr)) return;
-			mapView.drawKent(nr, false);
-		});
-
-		kents = newKents;
-
-		if (isPlaying) {
-			setTimeout(() => {
-				requestAnimationFrame(playNewGeneration);
-			}, TIMEOUT);
+		if (ev.code === 'ArrowUp') {
 		}
-	}
+	});
 }
 
 document.addEventListener('DOMContentLoaded', main);
