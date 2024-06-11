@@ -1,5 +1,7 @@
 const SIZE = 20;
 const CANVAS_SIZE = 500;
+const COLS = 10;
+const ROWS = 10;
 
 /**
  *
@@ -34,43 +36,104 @@ function drawGridV2(ctx, size) {
  * @param {CanvasRenderingContext2D} ctx
  * @param {number} size
  */
-function drawGrid(ctx, size, color = '#000') {
-	const { width, height } = ctx.canvas;
-
+function drawGrid(ctx, color = '#000') {
 	ctx.save();
-	ctx.clearRect(0, 0, width, height);
-
 	ctx.beginPath();
 	ctx.strokeStyle = color;
 
-	for (let x = 0; x <= width; x += size) {
-		ctx.moveTo(x, 0);
-		ctx.lineTo(x, height);
+	const totalWidth = COLS * SIZE;
+	const totalHeight = ROWS * SIZE;
+
+	for (let x = 20; x <= totalWidth; x += SIZE) {
+		ctx.moveTo(x, 20);
+		ctx.lineTo(x, totalHeight);
 	}
 
-	for (let y = 0; y <= height; y += size) {
-		ctx.moveTo(0, y);
-		ctx.lineTo(width, y);
+	for (let y = 20; y <= totalHeight; y += SIZE) {
+		ctx.moveTo(20, y);
+		ctx.lineTo(totalWidth, y);
 	}
 
 	ctx.stroke();
 	ctx.restore();
 }
 
-async function main() {
-	/** @type {HTMLCanvasElement} */
-	const canvas = document.querySelector('[data-campnou]');
-
+/**
+ *
+ * @param {HTMLCanvasElement} canvas
+ */
+function useCanvas(canvas) {
 	const ctx = canvas.getContext('2d');
 
-	ctx.translate(0.5, 0.5);
-	drawGrid(ctx, SIZE);
+	function render(scale, translate) {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx.save();
+		ctx.translate(translate.x, translate.y);
+		ctx.scale(scale, scale);
 
-	document.addEventListener('keydown', (ev) => {
-		if (ev.code === 'ArrowDown') {
-		}
+		drawGrid(ctx);
 
-		if (ev.code === 'ArrowUp') {
+		ctx.restore();
+	}
+
+	return {
+		render,
+	};
+}
+
+async function main() {
+	const node = document.getElementById('campnou');
+
+	let scale = 1.0;
+	let dragOffset = { x: 0, y: 0 };
+	let mouseDown = false;
+	const translate = { x: 0.5, y: 0.5 };
+
+	const canvas = useCanvas(node);
+	canvas.render(scale, translate);
+
+	document.addEventListener(
+		'mousewheel',
+		(ev) => {
+			ev.preventDefault();
+			ev.stopPropagation();
+
+			if (ev.ctrlKey && ev.target.id === 'campnou') {
+				console.log({
+					x: ev.clientX,
+					y: ev.clientY,
+				});
+				ev.preventDefault();
+				scale *= Math.exp(-ev.deltaY / 1000);
+				canvas.render(scale, translate);
+			}
+		},
+		{ passive: false }
+	);
+
+	node.addEventListener('mousedown', function (evt) {
+		mouseDown = true;
+		dragOffset.x = evt.clientX - translate.x;
+		dragOffset.y = evt.clientY - translate.y;
+	});
+
+	node.addEventListener('mouseup', function (evt) {
+		mouseDown = false;
+	});
+
+	node.addEventListener('mouseover', function (evt) {
+		mouseDown = false;
+	});
+
+	node.addEventListener('mouseout', function (evt) {
+		mouseDown = false;
+	});
+
+	node.addEventListener('mousemove', function (evt) {
+		if (mouseDown) {
+			translate.x = evt.clientX - dragOffset.x;
+			translate.y = evt.clientY - dragOffset.y;
+			canvas.render(scale, translate);
 		}
 	});
 }
